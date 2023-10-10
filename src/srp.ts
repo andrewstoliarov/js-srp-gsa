@@ -51,6 +51,7 @@ export enum Mode {
   RFC2945 = 0, /** Implements the hash interleave. */
   SRPTools = 1,
   GoSRP = 2,
+  GSA = 3,
 }
 
 /** Known-safe prime fields. */
@@ -235,12 +236,12 @@ export class Verifier {
 export class Client {
   readonly s: Srp;
   readonly i: Uint8Array;
-  readonly p: Uint8Array;
+  p: Uint8Array;
   readonly a: bigint;
   readonly A: bigint;
   readonly k: bigint;
   private _K: Uint8Array;
-  private _M: Uint8Array;
+  _M: Uint8Array;
 
   get K() { return this._K; }
   get M() { return this._M; }
@@ -316,7 +317,11 @@ export class Client {
       await this.s.hashInt(
         concatBytes(salt, new Uint8Array(
           await hash(this.s.h,
-            concatBytes(this.i, new Uint8Array([0x3A]), this.p)
+            concatBytes(
+              this.s.m == Mode.GSA ? new Uint8Array([]) : this.i, 
+              new Uint8Array([0x3A]), 
+              this.p
+            )
           )
         ))
       );
@@ -354,7 +359,10 @@ export class Client {
           concatBytes(
             xorBytes(
               new Uint8Array(await hash(this.s.h, bytesFromBigint(pf.N))),
-              new Uint8Array(await hash(this.s.h, bytesFromBigint(pf.g))),
+              new Uint8Array(await hash(
+                this.s.h, 
+                this.s.m == Mode.GSA ? pad(pf.g,pf.n) : bytesFromBigint(pf.g)
+              )),
             ),
             new Uint8Array(await hash(this.s.h, this.i)),
             salt,
@@ -367,6 +375,23 @@ export class Client {
     }
 
     return toHex(this._M);
+  }
+  /**
+   * Generate M2 used by GSA SRP.
+   */
+  async generateM2() {
+    if (!this.M) throw new Error("M not generated");
+    const M2 = new Uint8Array(
+      await hash(
+        this.s.h,
+        concatBytes(
+          bytesFromBigint(this.A),
+          this._M,
+          this._K
+        )
+      )
+    );
+    return M2;
   }
 
   /**
