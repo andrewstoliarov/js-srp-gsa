@@ -1,10 +1,11 @@
 {
-  "name": "js-srp",
-  "version": "0.0.2",
-  "description": "A TypeScript implementation of SRP-6a with some tweaks, designed to be compatible with opencoff/go-srp.",
+  "name": "@foxt/js-srp",
+  "version": "0.0.3",
+  "description": "js-srp modified to add support for the SRP implementation used by Apple's iCloud.com",
   "main": "dist/index.node.cjs",
   "browser": "dist/index.browser.js",
   "module": "dist/index.node.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/index.browser.js",
