@@ -268,7 +268,7 @@ export function constantTimeCompare(a: Uint8Array, b: Uint8Array): boolean {
  * @param {BufferSource} data data to hash
  * @return {Promise<ArrayBuffer>} digest
  */
-export function hash(hash: Hash, data: BufferSource): Promise<ArrayBuffer> {
+export function hash(hash: Hash, data: ArrayBuffer): Promise<ArrayBuffer> {
   switch (hash) {
     case Hash.SHA1:
       return crypto.subtle.digest("SHA-1", data);
