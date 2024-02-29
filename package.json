@@ -1,6 +1,6 @@
 {
   "name": "@foxt/js-srp",
-  "version": "0.0.3-patch1",
+  "version": "0.0.3-patch2",
   "description": "js-srp modified to add support for the SRP implementation used by Apple's iCloud.com",
   "main": "dist/index.node.cjs",
   "browser": "dist/index.browser.js",
